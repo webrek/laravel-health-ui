@@ -95,4 +95,24 @@ class HealthCheckerTest extends TestCase
 
         $this->assertSame(2, StubCheck::$runs);
     }
+
+    public function test_a_zero_ttl_disables_caching_even_with_a_cache(): void
+    {
+        $checker = new HealthChecker([new StubCheck('a')], new Repository(new ArrayStore), 0, 'k');
+
+        $checker->run();
+        $checker->run();
+
+        $this->assertSame(2, StubCheck::$runs);
+    }
+
+    public function test_a_ttl_without_a_cache_does_not_cache(): void
+    {
+        $checker = new HealthChecker([new StubCheck('a')], null, 60, 'k');
+
+        $checker->run();
+        $checker->run();
+
+        $this->assertSame(2, StubCheck::$runs);
+    }
 }

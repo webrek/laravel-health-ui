@@ -48,6 +48,9 @@ class CertificateExpiryCheck implements Check
         return Result::ok($this->name(), $message, $meta);
     }
 
+    /**
+     * @infection-ignore-all Live TLS network I/O that cannot be exercised in tests.
+     */
     private function fetchExpiry(): int
     {
         $context = stream_context_create([

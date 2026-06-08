@@ -1,0 +1,18 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": ["src"],
+        "excludes": [
+            "HealthUiServiceProvider.php"
+        ]
+    },
+    "mutators": {
+        "@default": true,
+        "ProtectedVisibility": false
+    },
+    "minMsi": 60,
+    "minCoveredMsi": 60,
+    "logs": {
+        "text": ".infection/infection.log"
+    }
+}

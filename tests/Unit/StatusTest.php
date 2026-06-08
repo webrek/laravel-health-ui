@@ -30,4 +30,19 @@ class StatusTest extends TestCase
     {
         $this->assertSame(Status::Ok, HealthReport::fromResults([])->status);
     }
+
+    public function test_labels(): void
+    {
+        $this->assertSame('Operational', Status::Ok->label());
+        $this->assertSame('Degraded', Status::Warning->label());
+        $this->assertSame('Down', Status::Failed->label());
+    }
+
+    public function test_a_warning_alone_keeps_the_report_healthy(): void
+    {
+        $report = HealthReport::fromResults([Result::ok('a'), Result::warning('b')]);
+
+        $this->assertSame(Status::Warning, $report->status);
+        $this->assertTrue($report->isHealthy());
+    }
 }
