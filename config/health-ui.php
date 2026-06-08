@@ -80,6 +80,35 @@ return [
             ],
         ],
 
+        'queue_failed_jobs' => [
+            'enabled' => false,
+            'connection' => null,
+            'table' => 'failed_jobs',
+            'warning_threshold' => 1,
+            'failure_threshold' => 25,
+        ],
+
+        'schedule' => [
+            'enabled' => false,
+            'key' => 'health-ui:schedule-heartbeat',
+            'store' => null,
+            'max_age_minutes' => 5,
+        ],
+
+        'migrations' => [
+            'enabled' => false,
+        ],
+
+        'certificates' => [
+            'enabled' => false,
+            'warning_days' => 14,
+            'failure_days' => 3,
+            'timeout' => 5,
+            'hosts' => [
+                // 'example.com',
+            ],
+        ],
+
     ],
 
 ];

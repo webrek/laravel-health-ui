@@ -4,6 +4,14 @@ All notable changes to `webrek/laravel-health-ui` are documented here. The
 format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and the
 project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-06-07
+
+### Added
+
+- Four new built-in checks: `queue_failed_jobs` (failed-jobs backlog),
+  `schedule` (scheduler heartbeat freshness), `migrations` (pending migrations)
+  and `certificates` (TLS certificate expiry per host).
+
 ## [1.0.0] - 2026-06-07
 
 ### Added

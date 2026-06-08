@@ -6,10 +6,14 @@ use Illuminate\Contracts\Cache\Factory as CacheFactory;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webrek\HealthUi\Checks\CacheCheck;
+use Webrek\HealthUi\Checks\CertificateExpiryCheck;
 use Webrek\HealthUi\Checks\DatabaseCheck;
 use Webrek\HealthUi\Checks\DebugModeCheck;
 use Webrek\HealthUi\Checks\DiskSpaceCheck;
 use Webrek\HealthUi\Checks\HttpCheck;
+use Webrek\HealthUi\Checks\PendingMigrationsCheck;
+use Webrek\HealthUi\Checks\QueueFailedJobsCheck;
+use Webrek\HealthUi\Checks\ScheduleHeartbeatCheck;
 use Webrek\HealthUi\Console\HealthCheckCommand;
 use Webrek\HealthUi\Contracts\Check;
 use Webrek\HealthUi\Http\HealthController;
@@ -88,6 +92,38 @@ class HealthUiServiceProvider extends ServiceProvider
                     $endpoint['name'],
                     $endpoint['url'],
                     (int) ($endpoint['timeout'] ?? 5),
+                );
+            }
+        }
+
+        if ($config['queue_failed_jobs']['enabled'] ?? false) {
+            $checks[] = new QueueFailedJobsCheck(
+                $config['queue_failed_jobs']['connection'] ?? null,
+                $config['queue_failed_jobs']['table'] ?? 'failed_jobs',
+                (int) ($config['queue_failed_jobs']['warning_threshold'] ?? 1),
+                (int) ($config['queue_failed_jobs']['failure_threshold'] ?? 25),
+            );
+        }
+
+        if ($config['schedule']['enabled'] ?? false) {
+            $checks[] = new ScheduleHeartbeatCheck(
+                $config['schedule']['key'] ?? 'health-ui:schedule-heartbeat',
+                (int) ($config['schedule']['max_age_minutes'] ?? 5),
+                $config['schedule']['store'] ?? null,
+            );
+        }
+
+        if ($config['migrations']['enabled'] ?? false) {
+            $checks[] = new PendingMigrationsCheck;
+        }
+
+        if ($config['certificates']['enabled'] ?? false) {
+            foreach ($config['certificates']['hosts'] ?? [] as $host) {
+                $checks[] = new CertificateExpiryCheck(
+                    $host,
+                    (int) ($config['certificates']['warning_days'] ?? 14),
+                    (int) ($config['certificates']['failure_days'] ?? 3),
+                    (int) ($config['certificates']['timeout'] ?? 5),
                 );
             }
         }

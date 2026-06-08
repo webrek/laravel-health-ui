@@ -81,6 +81,23 @@ Enable and tune them in `config/health-ui.php`:
 - **disk_space** — warns/fails past the configured used-percentage thresholds.
 - **debug_mode** — warns when `APP_DEBUG` is on (a frequent production slip).
 - **http** — pings each external dependency and expects a 2xx.
+- **queue_failed_jobs** — warns/fails as the failed-jobs backlog grows.
+- **schedule** — fails when the scheduler heartbeat goes stale (see below).
+- **migrations** — warns when migrations are committed but not run here.
+- **certificates** — warns before a host's TLS certificate expires.
+
+### Scheduler heartbeat
+
+The `schedule` check reads a timestamp your scheduler keeps fresh. Add a frequent
+task that stamps it:
+
+```php
+// routes/console.php (or your schedule definition)
+Schedule::call(fn () => cache()->forever('health-ui:schedule-heartbeat', now()->timestamp))
+    ->everyMinute();
+```
+
+The check then fails if that heartbeat is older than `max_age_minutes`.
 
 ## Writing your own check
 
