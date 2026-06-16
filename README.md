@@ -168,7 +168,7 @@ php artisan vendor:publish --tag=health-ui-views
 | Component | Version |
 | --------- | ------- |
 | PHP | 8.2+ |
-| Laravel | 12.x |
+| Laravel | 12.x / 13.x |
 
 ## Testing
 
