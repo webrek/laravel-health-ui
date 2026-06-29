@@ -1,14 +1,14 @@
 # Laravel Health UI
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/webrek/laravel-health-ui.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-health-ui)
-[![Total Downloads](https://img.shields.io/packagist/dt/webrek/laravel-health-ui.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-health-ui)
-[![Tests](https://img.shields.io/github/actions/workflow/status/webrek/laravel-health-ui/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/webrek/laravel-health-ui/actions/workflows/tests.yml)
-[![PHP Version](https://img.shields.io/packagist/php-v/webrek/laravel-health-ui.svg?style=flat-square)](https://php.net)
-[![License](https://img.shields.io/packagist/l/webrek/laravel-health-ui.svg?style=flat-square)](LICENSE)
+[![Última versión en Packagist](https://img.shields.io/packagist/v/webrek/laravel-health-ui.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-health-ui)
+[![Descargas totales](https://img.shields.io/packagist/dt/webrek/laravel-health-ui.svg?style=flat-square)](https://packagist.org/packages/webrek/laravel-health-ui)
+[![Pruebas](https://img.shields.io/github/actions/workflow/status/webrek/laravel-health-ui/tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/webrek/laravel-health-ui/actions/workflows/tests.yml)
+[![Versión de PHP](https://img.shields.io/packagist/php-v/webrek/laravel-health-ui.svg?style=flat-square)](https://php.net)
+[![Licencia](https://img.shields.io/packagist/l/webrek/laravel-health-ui.svg?style=flat-square)](LICENSE)
 
-A production health dashboard for Laravel. Pluggable checks (database, cache,
-disk, external services), a JSON endpoint your uptime monitor can poll, and a
-clean status page — all from one route.
+Un panel de salud de producción para Laravel. Verificaciones conectables (base de
+datos, caché, disco, servicios externos), un endpoint JSON que tu monitor de
+uptime puede sondear y una página de estado limpia — todo desde una sola ruta.
 
 ## Quickstart
 
@@ -16,7 +16,7 @@ clean status page — all from one route.
 composer require webrek/laravel-health-ui
 ```
 
-Visit `/health` for the status page, or poll it as JSON:
+Visita `/health` para ver la página de estado, o sondéala como JSON:
 
 ```bash
 curl -H "Accept: application/json" https://your-app.test/health
@@ -34,35 +34,37 @@ curl -H "Accept: application/json" https://your-app.test/health
 }
 ```
 
-The endpoint returns **200** while the app is healthy and **503** the moment a
-check hard-fails — exactly what an uptime monitor (Pingdom, UptimeRobot, a
-Kubernetes liveness probe) needs.
+El endpoint devuelve **200** mientras la app está sana y **503** en el momento en
+que una verificación falla de forma dura — exactamente lo que necesita un monitor
+de uptime (Pingdom, UptimeRobot, una sonda de liveness de Kubernetes).
 
-## What you get over Laravel's `/up`
+## Lo que obtienes frente al `/up` de Laravel
 
-Laravel's built-in `/up` route answers a single question: did the framework
-boot? That tells you nothing about whether your database is reachable, your
-cache is responding, the disk is filling up, or a third-party API you depend on
-is down. This package runs real checks, aggregates them, and shows you which one
-is unhealthy — on a status page and as machine-readable JSON.
+La ruta `/up` integrada en Laravel responde una sola pregunta: ¿arrancó el
+framework? Eso no te dice nada sobre si tu base de datos es alcanzable, si tu
+caché está respondiendo, si el disco se está llenando o si una API de terceros de
+la que dependes está caída. Este paquete ejecuta verificaciones reales, las
+agrega y te muestra cuál está enferma — en una página de estado y como JSON
+legible por máquina.
 
-## Status model
+## Modelo de estado
 
-Each check returns one of three statuses, and the overall status is the worst of
-them:
+Cada verificación devuelve uno de tres estados, y el estado general es el peor de
+ellos:
 
-| Status | Meaning | HTTP |
+| Estado | Significado | HTTP |
 | --- | --- | --- |
-| `ok` (Operational) | Healthy | 200 |
-| `warning` (Degraded) | Working but needs attention (e.g. disk 85% full, debug mode on) | 200 |
-| `failed` (Down) | A hard failure | 503 |
+| `ok` (Operativo) | Sano | 200 |
+| `warning` (Degradado) | Funciona pero requiere atención (p. ej. disco al 85%, modo debug activado) | 200 |
+| `failed` (Caído) | Una falla dura | 503 |
 
-Warnings keep the endpoint at **200** so you are not paged for degraded-but-
-serving conditions — only hard failures flip it to **503**.
+Las advertencias mantienen el endpoint en **200** para que no te alerten por
+condiciones degradadas-pero-sirviendo — solo las fallas duras lo cambian a
+**503**.
 
-## Built-in checks
+## Verificaciones integradas
 
-Enable and tune them in `config/health-ui.php`:
+Actívalas y ajústalas en `config/health-ui.php`:
 
 ```php
 'checks' => [
@@ -76,20 +78,20 @@ Enable and tune them in `config/health-ui.php`:
 ],
 ```
 
-- **database** — runs `select 1` on the connection.
-- **cache** — writes and reads back a value.
-- **disk_space** — warns/fails past the configured used-percentage thresholds.
-- **debug_mode** — warns when `APP_DEBUG` is on (a frequent production slip).
-- **http** — pings each external dependency and expects a 2xx.
-- **queue_failed_jobs** — warns/fails as the failed-jobs backlog grows.
-- **schedule** — fails when the scheduler heartbeat goes stale (see below).
-- **migrations** — warns when migrations are committed but not run here.
-- **certificates** — warns before a host's TLS certificate expires.
+- **database** — ejecuta `select 1` en la conexión.
+- **cache** — escribe y vuelve a leer un valor.
+- **disk_space** — advierte/falla al pasar los umbrales de porcentaje usado configurados.
+- **debug_mode** — advierte cuando `APP_DEBUG` está activado (un desliz frecuente en producción).
+- **http** — hace ping a cada dependencia externa y espera un 2xx.
+- **queue_failed_jobs** — advierte/falla a medida que crece el backlog de trabajos fallidos.
+- **schedule** — falla cuando el heartbeat del programador se vuelve obsoleto (ver abajo).
+- **migrations** — advierte cuando hay migraciones confirmadas pero no ejecutadas aquí.
+- **certificates** — advierte antes de que expire el certificado TLS de un host.
 
-### Scheduler heartbeat
+### Heartbeat del programador
 
-The `schedule` check reads a timestamp your scheduler keeps fresh. Add a frequent
-task that stamps it:
+La verificación `schedule` lee una marca de tiempo que tu programador mantiene
+fresca. Agrega una tarea frecuente que la estampe:
 
 ```php
 // routes/console.php (or your schedule definition)
@@ -97,12 +99,14 @@ Schedule::call(fn () => cache()->forever('health-ui:schedule-heartbeat', now()->
     ->everyMinute();
 ```
 
-The check then fails if that heartbeat is older than `max_age_minutes`.
+La verificación entonces falla si ese heartbeat es más antiguo que
+`max_age_minutes`.
 
-## Writing your own check
+## Cómo escribir tu propia verificación
 
-Implement the `Check` contract. Return a `Result`, or just throw — the checker
-turns an exception into a failed result automatically.
+Implementa el contrato `Check`. Devuelve un `Result`, o simplemente lanza una
+excepción — el verificador convierte una excepción en un resultado fallido
+automáticamente.
 
 ```php
 use Webrek\HealthUi\Contracts\Check;
@@ -126,22 +130,23 @@ class RedisQueueDepthCheck implements Check
 }
 ```
 
-Register it (e.g. in a service provider):
+Regístrala (p. ej. en un service provider):
 
 ```php
 app(\Webrek\HealthUi\HealthChecker::class)->register(new RedisQueueDepthCheck);
 ```
 
-## Command line
+## Línea de comandos
 
-Run the checks from the CLI or a cron — it exits non-zero when unhealthy, so it
-plugs straight into deploy gates and alerting:
+Ejecuta las verificaciones desde la CLI o un cron — termina con código distinto
+de cero cuando está enfermo, así que se conecta directamente a los gates de
+despliegue y a las alertas:
 
 ```bash
 php artisan health:check
 ```
 
-## Configuration highlights
+## Aspectos destacados de la configuración
 
 ```php
 'route' => env('HEALTH_UI_ROUTE', 'health'),
@@ -153,39 +158,39 @@ php artisan health:check
 'cache' => ['ttl' => 0, 'store' => null, 'key' => 'health-ui.report'],
 ```
 
-Publish the config and views to customise them:
+Publica la configuración y las vistas para personalizarlas:
 
 ```bash
 php artisan vendor:publish --tag=health-ui-config
 php artisan vendor:publish --tag=health-ui-views
 ```
 
-> The endpoint can reveal internal state. In production, put it behind
-> `middleware` (a token, a signed URL, or an internal-network restriction).
+> El endpoint puede revelar estado interno. En producción, ponlo detrás de
+> `middleware` (un token, una URL firmada o una restricción de red interna).
 
-## Requirements
+## Requisitos
 
-| Component | Version |
+| Componente | Versión |
 | --------- | ------- |
 | PHP | 8.2+ |
 | Laravel | 12.x / 13.x |
 
-## Testing
+## Pruebas
 
 ```bash
 composer install
 composer test
 ```
 
-## Contributing
+## Contribuir
 
-See [CONTRIBUTING.md](CONTRIBUTING.md).
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md).
 
-## Security
+## Seguridad
 
-Please review the [security policy](SECURITY.md) before reporting a
-vulnerability.
+Por favor revisa la [política de seguridad](SECURITY.md) antes de reportar una
+vulnerabilidad.
 
-## License
+## Licencia
 
-The MIT License (MIT). See [LICENSE](LICENSE).
+La Licencia MIT (MIT). Consulta [LICENSE](LICENSE).
